@@ -9,7 +9,7 @@ class Celda
 {
 private:
 	int x, y;
-	bool mina;
+	bool mina, descubierta;
 
 public:
 	Celda(int x, int y, bool tieneMina)
@@ -17,6 +17,7 @@ public:
 		this->x = x;
 		this->y = y;
 		this->mina = tieneMina;
+		this->descubierta = false;
 	}
 	void imprimir()
 	{
@@ -39,6 +40,37 @@ public:
 	bool tieneMina()
 	{
 		return this->mina;
+	}
+
+	string obtenerRepresentacionParaJugador()
+	{
+		if (this->descubierta)
+		{
+			if (this->tieneMina())
+			{
+				return "*";
+			}
+			else
+			{
+				return "2";
+			}
+		}
+		else
+		{
+			return ".";
+		}
+	}
+
+	string obtenerRepresentacionParaProgramador()
+	{
+		if (this->tieneMina())
+		{
+			return "*";
+		}
+		else
+		{
+			return "2";
+		}
 	}
 };
 class Tablero
@@ -69,17 +101,69 @@ public:
 		}
 	}
 
+	void imprimirSeparadorEncabezado()
+	{
+		int m;
+		for (m = 0; m <= this->anchura; m++)
+		{
+			cout << "----";
+			if (m + 2 == this->anchura)
+			{
+				cout << "-";
+			}
+		}
+		cout << "\n";
+	}
+
+	void imprimirSeparadorFilas()
+	{
+		int m;
+		for (m = 0; m <= this->anchura; m++)
+		{
+			cout << "+---";
+			if (m == this->anchura)
+			{
+				cout << "+";
+			}
+		}
+		cout << "\n";
+	}
+
+	void imprimirEncabezado()
+	{
+		this->imprimirSeparadorEncabezado();
+		cout << "|   ";
+		int l;
+		for (l = 0; l < this->anchura; l++)
+		{
+			cout << "| " << l + 1 << " ";
+			if (l + 1 == this->anchura)
+			{
+				cout << "|";
+			}
+		}
+		cout << "\n";
+	}
+
 	void imprimir()
 	{
-
+		this->imprimirEncabezado();
+		this->imprimirSeparadorEncabezado();
 		int x, y;
 		for (y = 0; y < this->altura; y++)
 		{
+			cout << "| " << y + 1 << " ";
 			for (x = 0; x < this->anchura; x++)
 			{
 				Celda c = this->contenido.at(y).at(x);
-				c.imprimir();
+				cout << "| " << c.obtenerRepresentacionParaJugador() << " ";
+				if (x + 1 == this->anchura)
+				{
+					cout << "|";
+				}
 			}
+			cout << "\n";
+			this->imprimirSeparadorFilas();
 		}
 	}
 
@@ -125,6 +209,7 @@ public:
 		this->tablero = tablero;
 		this->cantidadMinas = cantidadMinas;
 		this->colocarMinasAleatoriamente();
+		this->tablero.imprimir();
 	}
 
 	void colocarMinasAleatoriamente()
@@ -146,5 +231,5 @@ public:
 int main()
 {
 	srand(getpid());
-	Juego juego(Tablero(3, 2), 3);
+	Juego juego(Tablero(5, 5), 3);
 }
