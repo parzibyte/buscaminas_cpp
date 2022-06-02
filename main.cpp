@@ -378,6 +378,8 @@ public:
 			if (this->jugadorGana())
 			{
 				cout << "Ganaste\n";
+				this->tablero.setModoProgramador(true);
+				this->tablero.imprimir();
 				break;
 			}
 		}
@@ -387,9 +389,9 @@ public:
 int main()
 {
 	srand(getpid());
-	int filas = 9;
-	int columnas = 9;
-	int minas = 10;
+	int filas = 3;
+	int columnas = 3;
+	int minas = 2;
 	bool modoProgramador = false; // Poner en true para depurar
 	Juego juego(Tablero(filas, columnas, modoProgramador), minas);
 	juego.iniciar();
