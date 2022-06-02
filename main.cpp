@@ -58,7 +58,7 @@ class Tablero
 private:
 	int altura, anchura;
 	bool modoProgramador; // El modo programador te deja ver las minas y minas cercanas aunque no las hayas descubierto
-	vector<vector<Celda>> contenido;
+	vector<vector<Celda> > contenido;
 
 	string obtenerRepresentacionMina(int x, int y)
 	{
