@@ -256,6 +256,10 @@ public:
 		}
 		return true;
 	}
+	void setModoProgramador(bool modoProgramador)
+	{
+		this->modoProgramador = modoProgramador;
+	}
 };
 
 class Juego
@@ -324,6 +328,11 @@ public:
 		return columna - 1;
 	}
 
+	bool jugadorGana()
+	{
+		return false;
+	}
+
 	void jugar()
 	{
 		int fila, columna;
@@ -333,7 +342,20 @@ public:
 			fila = this->solicitarFila();
 			columna = this->solicitarColumna();
 			bool ok = this->tablero.descubrir(columna, fila);
-			cout << "Al descubrir: " << ok << "\n";
+			if (!ok)
+			{
+				cout << "Perdiste\n";
+				// El modo programador te permite ver todo. Entonces lo activamos y volvemos a imprimir. No hay problema porque el jugador ya perdió
+				this->tablero.setModoProgramador(true);
+				this->tablero.imprimir();
+				break;
+			}
+
+			if (this->jugadorGana())
+			{
+				cout << "Ganaste\n";
+				break;
+			}
 		}
 	}
 };
@@ -341,5 +363,5 @@ public:
 int main()
 {
 	srand(getpid());
-	Juego juego(Tablero(5, 5, true), 3);
+	Juego juego(Tablero(5, 5, false), 3);
 }
