@@ -2,6 +2,7 @@
 #include <vector>
 #include <stdlib.h> // rand
 #include <unistd.h> // getpid
+#include <sstream>
 
 using namespace std;
 
@@ -42,17 +43,35 @@ public:
 		return this->mina;
 	}
 
-	string obtenerRepresentacionParaJugador()
+	bool estaDescubierta()
 	{
-		if (this->descubierta)
+		return this->descubierta;
+	}
+};
+class Tablero
+{
+private:
+	int altura, anchura;
+	bool modoProgramador; // El modo programador te deja ver las minas y minas cercanas aunque no las hayas descubierto
+	vector<vector<Celda>> contenido;
+
+	string obtenerRepresentacionMina(int x, int y)
+	{
+		Celda c = this->contenido.at(y).at(x);
+		if (c.estaDescubierta() || this->modoProgramador)
 		{
-			if (this->tieneMina())
+			if (c.tieneMina())
 			{
 				return "*";
 			}
 			else
 			{
-				return "2";
+				int cantidad = this->minasCercanas(y, x);
+				string cantidadComoCadena = "";
+				stringstream ss;
+				ss << cantidad;
+				ss >> cantidadComoCadena;
+				return cantidadComoCadena;
 			}
 		}
 		else
@@ -61,34 +80,67 @@ public:
 		}
 	}
 
-	string obtenerRepresentacionParaProgramador()
+	int minasCercanas(int fila, int columna)
 	{
-		if (this->tieneMina())
+		int conteo = 0, filaInicio, filaFin, columnaInicio, columnaFin;
+		if (fila <= 0)
 		{
-			return "*";
+			filaInicio = 0;
 		}
 		else
 		{
-			return "2";
+			filaInicio = fila - 1;
 		}
+
+		if (fila + 1 >= this->altura)
+		{
+			filaFin = this->altura - 1;
+		}
+		else
+		{
+			filaFin = fila + 1;
+		}
+
+		if (columna <= 0)
+		{
+			columnaInicio = 0;
+		}
+		else
+		{
+			columnaInicio = columna - 1;
+		}
+		if (columna + 1 >= this->anchura)
+		{
+			columnaFin = this->anchura - 1;
+		}
+		else
+		{
+			columnaFin = columna + 1;
+		}
+		int m;
+		for (m = filaInicio; m <= filaFin; m++)
+		{
+			int l;
+			for (l = columnaInicio; l <= columnaFin; l++)
+			{
+				if (this->contenido.at(m).at(l).tieneMina())
+				{
+					conteo++;
+				}
+			}
+		}
+		return conteo;
 	}
-};
-class Tablero
-{
-private:
-	// const int altura = 10;
-	//  int contenido[this->altura][3]; // Aquí cambiar la altura, anchura
-	int altura, anchura;
-	vector<vector<Celda>> contenido;
 
 public:
 	Tablero()
 	{
 	}
-	Tablero(int altura, int anchura)
+	Tablero(int altura, int anchura, bool modoProgramador)
 	{
 		this->altura = altura;
 		this->anchura = anchura;
+		this->modoProgramador = modoProgramador;
 		int x, y;
 		for (y = 0; y < this->altura; y++)
 		{
@@ -120,7 +172,14 @@ public:
 		int m;
 		for (m = 0; m <= this->anchura; m++)
 		{
-			cout << "+---";
+			if (m <= 1)
+			{
+				cout << "|---";
+			}
+			else
+			{
+				cout << "+---";
+			}
 			if (m == this->anchura)
 			{
 				cout << "+";
@@ -155,8 +214,7 @@ public:
 			cout << "| " << y + 1 << " ";
 			for (x = 0; x < this->anchura; x++)
 			{
-				Celda c = this->contenido.at(y).at(x);
-				cout << "| " << c.obtenerRepresentacionParaJugador() << " ";
+				cout << "| " << this->obtenerRepresentacionMina(x, y) << " ";
 				if (x + 1 == this->anchura)
 				{
 					cout << "|";
@@ -231,5 +289,5 @@ public:
 int main()
 {
 	srand(getpid());
-	Juego juego(Tablero(5, 5), 3);
+	Juego juego(Tablero(5, 5, true), 3);
 }
