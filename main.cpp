@@ -306,7 +306,6 @@ public:
 		this->tablero = tablero;
 		this->cantidadMinas = cantidadMinas;
 		this->colocarMinasAleatoriamente();
-		this->jugar();
 	}
 
 	void colocarMinasAleatoriamente()
@@ -358,7 +357,7 @@ public:
 		}
 	}
 
-	void jugar()
+	void iniciar()
 	{
 		int fila, columna;
 		while (true)
@@ -388,5 +387,10 @@ public:
 int main()
 {
 	srand(getpid());
-	Juego juego(Tablero(2, 3, true), 3);
+	int filas = 9;
+	int columnas = 9;
+	int minas = 10;
+	bool modoProgramador = false; // Poner en true para depurar
+	Juego juego(Tablero(filas, columnas, modoProgramador), minas);
+	juego.iniciar();
 }
