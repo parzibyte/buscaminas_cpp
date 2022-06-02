@@ -260,6 +260,23 @@ public:
 	{
 		this->modoProgramador = modoProgramador;
 	}
+
+	int contarCeldasSinMinasYSinDescubrir()
+	{
+		int x, y, conteo = 0;
+		for (y = 0; y < this->altura; y++)
+		{
+			for (x = 0; x < this->anchura; x++)
+			{
+				Celda c = this->contenido.at(y).at(x);
+				if (!c.estaDescubierta() && !c.tieneMina())
+				{
+					conteo++;
+				}
+			}
+		}
+		return conteo;
+	}
 };
 
 class Juego
@@ -330,7 +347,15 @@ public:
 
 	bool jugadorGana()
 	{
-		return false;
+		int conteo = this->tablero.contarCeldasSinMinasYSinDescubrir();
+		if (conteo == 0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	void jugar()
@@ -363,5 +388,5 @@ public:
 int main()
 {
 	srand(getpid());
-	Juego juego(Tablero(5, 5, false), 3);
+	Juego juego(Tablero(2, 3, true), 3);
 }
