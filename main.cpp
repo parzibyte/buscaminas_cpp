@@ -47,6 +47,11 @@ public:
 	{
 		return this->descubierta;
 	}
+
+	void setDescubierta(bool descubierta)
+	{
+		this->descubierta = descubierta;
+	}
 };
 class Tablero
 {
@@ -238,6 +243,19 @@ public:
 	{
 		return this->anchura;
 	}
+	/*
+			Regresa false si había una mina. true en caso contrario
+		*/
+	bool descubrir(int x, int y)
+	{
+		this->contenido.at(y).at(x).setDescubierta(true);
+		Celda celda = this->contenido.at(y).at(x);
+		if (celda.tieneMina())
+		{
+			return false;
+		}
+		return true;
+	}
 };
 
 class Juego
@@ -267,7 +285,7 @@ public:
 		this->tablero = tablero;
 		this->cantidadMinas = cantidadMinas;
 		this->colocarMinasAleatoriamente();
-		this->tablero.imprimir();
+		this->jugar();
 	}
 
 	void colocarMinasAleatoriamente()
@@ -282,6 +300,40 @@ public:
 			{
 				minasColocadas++;
 			}
+		}
+	}
+
+	/*
+		solicitarFila y solicitarColumna piden la fila y columna del 1 al N, pero
+		recordemos que los índices se manejan del 0 al N-1, por eso es que se resta 1
+	*/
+
+	int solicitarFila()
+	{
+		int fila = 0;
+		cout << "Ingresa la fila: ";
+		cin >> fila;
+		return fila - 1;
+	}
+
+	int solicitarColumna()
+	{
+		int columna = 0;
+		cout << "Ingresa la columna: ";
+		cin >> columna;
+		return columna - 1;
+	}
+
+	void jugar()
+	{
+		int fila, columna;
+		while (true)
+		{
+			this->tablero.imprimir();
+			fila = this->solicitarFila();
+			columna = this->solicitarColumna();
+			bool ok = this->tablero.descubrir(columna, fila);
+			cout << "Al descubrir: " << ok << "\n";
 		}
 	}
 };
